@@ -18,11 +18,6 @@ namespace IIG.CoSFE.DatabaseUtils
         {
         }
 
-        public bool getStatus()
-        {
-            return ConnectToDatabase();
-        }
-
         private bool Credentials(string operation, string login, string password)
         {
             if (!ConnectToDatabase())
