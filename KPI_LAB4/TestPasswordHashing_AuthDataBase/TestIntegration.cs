@@ -65,5 +65,33 @@ namespace KPI_LAB4.TestPasswordHashing_AuthDataBase
             Assert.False(status6);
         }
 
+        [Fact]
+        public void TestAddNotHashedPassword()
+        {
+            AuthDatabaseUtils connection = new AuthDatabaseUtils(server, database, isTrusted, login1, password1, connectionTimeOut);
+            // 1.Try to add not hashed password
+            bool status1 = connection.AddCredentials(login1, password1);
+            Assert.False(status1);
+            
+        }
+
+        [Fact]
+        public void TestDeleteNotExisting()
+        {
+            AuthDatabaseUtils connection = new AuthDatabaseUtils(server, database, isTrusted, login1, password1, connectionTimeOut);
+            // 1.Try to add not hashed password
+            bool status1 = connection.DeleteCredentials(login1, password1);
+            Assert.False(status1);
+        }
+
+        [Fact]
+        public void TestUpdateNotExisting()
+        {
+            AuthDatabaseUtils connection = new AuthDatabaseUtils(server, database, isTrusted, login1, password1, connectionTimeOut);
+            // 1.Try to add not hashed password
+            bool status1 = connection.UpdateCredentials(login1, password1, login2, password2);
+            Assert.False(status1);
+        }
+
     }
 }
