@@ -42,55 +42,81 @@ namespace KPI_LAB4.TestPasswordHashing_AuthDataBase
             string password1Hashed = PasswordHasher.GetHash(password1);
             string password2Hashed = PasswordHasher.GetHash(password2);
             string password3Hashed = PasswordHasher.GetHash(password3);
+            bool status;
             // 1. Check if password hashes the same way
             Assert.Equal(password1Hashed, PasswordHasher.GetHash(password1));
             AuthDatabaseUtils connection = new AuthDatabaseUtils(server, database, isTrusted, login1, password1, connectionTimeOut);
-            bool status1 = connection.AddCredentials(login2, password2Hashed);
+            status = connection.AddCredentials(login2, password2Hashed);
             // 2. Check status of adding credentials
-            Assert.True(status1);
-            bool status2 = connection.CheckCredentials(login2, password2Hashed);
+            Assert.True(status);
+            status = connection.CheckCredentials(login2, password2Hashed);
             // 3. Check if credentials were saved
-            Assert.True(status2);
-            bool status3 = connection.UpdateCredentials(login2, password2Hashed, login3, password3Hashed);
+            Assert.True(status);
+            status = connection.UpdateCredentials(login2, password2Hashed, login3, password3Hashed);
             // 4. Check status
-            Assert.True(status3);
-            bool status4 = connection.CheckCredentials(login3, password3Hashed);
+            Assert.True(status);
+            status = connection.CheckCredentials(login3, password3Hashed);
             // 5. Check if credentials were updated
-            Assert.True(status4);
-            bool status5 = connection.DeleteCredentials(login3, password3Hashed);
+            Assert.True(status);
+            status = connection.DeleteCredentials(login3, password3Hashed);
             // 6. Check status
-            Assert.True(status5);
-            bool status6 = connection.CheckCredentials(login3, password3Hashed);
+            Assert.True(status);
+            status = connection.CheckCredentials(login3, password3Hashed);
             // 7. Check if credentials were deleted
-            Assert.False(status6);
+            Assert.False(status);
         }
 
         [Fact]
         public void TestAddNotHashedPassword()
         {
             AuthDatabaseUtils connection = new AuthDatabaseUtils(server, database, isTrusted, login1, password1, connectionTimeOut);
-            // 1.Try to add not hashed password
-            bool status1 = connection.AddCredentials(login1, password1);
-            Assert.False(status1);
-            
+            bool status = connection.AddCredentials(login1, password1);
+            Assert.False(status);
+            status = connection.DeleteCredentials(login1, password1);
+            Assert.True(status);
+            string longString = "";
+            for (int i = 0; i < 1000; i++) longString += "a";
+            status = connection.AddCredentials(login1, longString);
+            if (status)
+            {
+                status = connection.DeleteCredentials(login1, longString);
+                Assert.True(status);
+            }
+            Assert.False(status);
         }
 
         [Fact]
         public void TestDeleteNotExisting()
         {
             AuthDatabaseUtils connection = new AuthDatabaseUtils(server, database, isTrusted, login1, password1, connectionTimeOut);
-            // 1.Try to add not hashed password
-            bool status1 = connection.DeleteCredentials(login1, password1);
-            Assert.False(status1);
+            bool status = connection.DeleteCredentials(login1, password1);
+            Assert.False(status);
         }
 
         [Fact]
         public void TestUpdateNotExisting()
         {
             AuthDatabaseUtils connection = new AuthDatabaseUtils(server, database, isTrusted, login1, password1, connectionTimeOut);
-            // 1.Try to add not hashed password
-            bool status1 = connection.UpdateCredentials(login1, password1, login2, password2);
-            Assert.False(status1);
+            bool status = connection.UpdateCredentials(login1, password1, login2, password2);
+            Assert.False(status);
+        }
+
+        [Fact]
+        public void TestUpdateWithAlreadyExisting()
+        {
+            AuthDatabaseUtils connection = new AuthDatabaseUtils(server, database, isTrusted, login1, password1, connectionTimeOut);
+            bool status = connection.UpdateCredentials(login1, password1, login2, password2);
+            Assert.False(status);
+        }
+
+        [Fact]
+        public void TestAddInvalidPassword()
+        {
+            AuthDatabaseUtils connection = new AuthDatabaseUtils(server, database, isTrusted, login1, password1, connectionTimeOut);
+            bool status = connection.AddCredentials(login1, null);
+            Assert.False(status);
+            status = connection.AddCredentials(login1, "");
+            Assert.False(status);
         }
 
     }

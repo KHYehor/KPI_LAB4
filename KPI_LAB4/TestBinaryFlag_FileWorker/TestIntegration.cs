@@ -87,5 +87,12 @@ namespace KPI_LAB4.TestBinaryFlag_FileWorker
             // 10. Check if writing to file was successful
             Assert.Equal(lines3[0], true.ToString());
         }
+
+        [Fact]
+        public void TestDirectoryFailCreate()
+        {
+            Assert.Throws<ArgumentException>(() => BaseFileWorker.MkDir(""));
+        }
+
     }
 }
